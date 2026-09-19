@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import HomePage from "../pages/HomePage";
+import GamePage from "../pages/GamePage";
 import Sala from "../pages/Sala";
 import Login from "../components/Login";
 import Register from "../components/Register";
@@ -54,15 +55,11 @@ export function AppRouter({
       <Route
         path="/games/:gameId"
         element={
-          <TypographyPlaceholder />
+          user ? <GamePage /> : <Navigate to="/login" replace />
         }
       />
 
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
-}
-
-function TypographyPlaceholder() {
-  return <div>Vista del juego pendiente de implementación.</div>;
 }
