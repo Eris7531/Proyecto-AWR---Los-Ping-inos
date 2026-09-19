@@ -1,6 +1,6 @@
 import {useState} from "react";
 import axios from "axios";
-import type {User} from "../types/data"
+import type {User} from "../types/user"
 import {
     Box,
     Button,

@@ -16,7 +16,7 @@ import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import {useState} from "react";
-import type {User} from "../types/data";
+import type {User} from "../types/user";
 
 interface BannerProps {
     user: User | null;

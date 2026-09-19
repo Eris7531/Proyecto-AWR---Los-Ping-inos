@@ -1,16 +1,28 @@
 {
   "users": [
     {
-      "id": "1",
-      "name": "Juan",
-      "email": "juan@gmail.com",
-      "password": "123456"
+      "id": 1,
+      "name": "Alex",
+      "avatar": "https://i.pravatar.cc/150?img=12",
+      "rank": "Plata"
     },
     {
-      "id": "2",
-      "name": "Maria",
-      "email": "maria@gmail.com",
-      "password": "abcdef"
+      "id": 2,
+      "name": "Sofia",
+      "avatar": "https://i.pravatar.cc/150?img=47",
+      "rank": "Bronze"
+    },
+    {
+      "id": 3,
+      "name": "Diego",
+      "avatar": "https://i.pravatar.cc/150?img=33",
+      "rank": "Plata"
+    },
+    {
+      "id": 4,
+      "name": "Luna",
+      "avatar": "https://i.pravatar.cc/150?img=44",
+      "rank": "Oro"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
