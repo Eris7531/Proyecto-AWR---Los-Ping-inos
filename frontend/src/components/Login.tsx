@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-import type {User} from "../types/user"
+import type { AuthenticatedUser } from "../types/user"
 import {
     Box,
     Button,
@@ -12,7 +12,7 @@ import {
 
 
 interface LoginProps {
-    onLogin: (user: User) => void;
+    onLogin: (user: AuthenticatedUser) => void;
     onGoToRegister: () => void;
 };
 
@@ -28,8 +28,8 @@ function Login({onLogin, onGoToRegister}: LoginProps) {
         setError("");
 
         try { 
-            const response = await axios.get<User[]>(
-                "http://localhost:3001/users"
+            const response = await axios.get<AuthenticatedUser[]>(
+                "http://localhost:3001/authUsers"
             );
 
             const users = response.data;
@@ -105,6 +105,7 @@ function Login({onLogin, onGoToRegister}: LoginProps) {
                         type="submit"
                         variant="contained"
                         size="large"
+                        //onClick={goToHomePage}
                     >
                         Iniciar sesión
                     </Button>

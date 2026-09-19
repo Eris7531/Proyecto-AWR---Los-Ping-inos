@@ -1,28 +1,70 @@
 {
-  "users": [
+  "authUsers": [
     {
       "id": 1,
       "name": "Alex",
       "avatar": "https://i.pravatar.cc/150?img=12",
-      "rank": "Plata"
+      "rank": [
+        {
+          "id": 1,
+          "Game": {
+            "id": 1,
+            "gameName": "League of Legends"
+          },
+          "rankName": "Plata"
+        }
+      ],
+      "email": "alex@gmail.com",
+      "password": "123456"
     },
     {
       "id": 2,
       "name": "Sofia",
       "avatar": "https://i.pravatar.cc/150?img=47",
-      "rank": "Bronze"
+      "rank": [
+        {
+          "id": 2,
+          "Game": {
+            "id": 1,
+            "gameName": "League of Legends"
+          },
+          "rankName": "Bronce"
+        }
+      ],
+      "email": "sofia@gmail.com",
+      "password": "qwerty"
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "name": "Alex",
+      "avatar": "https://i.pravatar.cc/150?img=12",
+      "rank": [
+        {
+          "id": 1,
+          "Game": {
+            "id": 1,
+            "gameName": "League of Legends"
+          },
+          "rankName": "Plata"
+        }
+      ]
     },
     {
-      "id": 3,
-      "name": "Diego",
-      "avatar": "https://i.pravatar.cc/150?img=33",
-      "rank": "Plata"
-    },
-    {
-      "id": 4,
-      "name": "Luna",
-      "avatar": "https://i.pravatar.cc/150?img=44",
-      "rank": "Oro"
+      "id": 2,
+      "name": "Sofia",
+      "avatar": "https://i.pravatar.cc/150?img=47",
+      "rank": [
+        {
+          "id": 2,
+          "Game": {
+            "id": 1,
+            "gameName": "League of Legends"
+          },
+          "rankName": "Bronce"
+        }
+      ]
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

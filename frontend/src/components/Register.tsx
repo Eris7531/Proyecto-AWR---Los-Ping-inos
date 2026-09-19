@@ -1,6 +1,6 @@
 import {useState} from "react";
 import axios from "axios";
-import type {User} from "../types/user"
+import type { AuthenticatedUser } from "../types/user"
 import {
     Box,
     Button,
@@ -12,7 +12,7 @@ import {
 
 
 interface RegisterProps {
-    onRegister: (user: User) => void;
+    onRegister: (user: AuthenticatedUser) => void;
     onGoToLogin: () => void;
 }
 
@@ -32,8 +32,8 @@ function Register({ onRegister, onGoToLogin, }: RegisterProps) {
             return;
         }
         try {
-            const response = await axios.get<User[]>(
-                "http://localhost:3001/users"
+            const response = await axios.get<AuthenticatedUser[]>(
+                "http://localhost:3001/authUsers"
             );
 
             const users = response.data;
@@ -44,10 +44,12 @@ function Register({ onRegister, onGoToLogin, }: RegisterProps) {
                 return;
             }
 
-            const newUser = await axios.post<User> (
-                "http://localhost:3001/users",
+            const newUser = await axios.post<AuthenticatedUser> (
+                "http://localhost:3001/authUsers",
                 {
                     name,
+                    avatar: "",
+                    rank: [],
                     email,
                     password
                 }

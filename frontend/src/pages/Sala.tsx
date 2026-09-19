@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import usersData from "../../db.json";
 import type { Message } from "../types/message";
-import type { User} from "../types/user";
+import type { PubilcUser } from "../types/user";
 import "../styles/Sala.css"
 
 function Sala() {
 
-    const users: User[] = usersData.users;
+    const users: PubilcUser[] = usersData.users;
 
     const [messages, setMessages] = useState<Message[]>(() => {
         const saved = localStorage.getItem("gaming-Sala");
@@ -31,7 +31,7 @@ function Sala() {
 
     const [message, setMessage] = useState("");
 
-    const currentUser: User = users[0];
+    const currentUser: PubilcUser = users[0];
 
     const messagesEndRef =
         useRef<HTMLDivElement>(null);
@@ -85,7 +85,7 @@ function Sala() {
 
     };
 
-    const getUser = (userId: number) => {
+    const getUser = (userId: number): PubilcUser | undefined => {
         return users.find(
         (user) => user.id === userId
         );
@@ -110,7 +110,10 @@ function Sala() {
             </div>
 
             <div className="users-list">
-                {users.map((user) => (
+                {users.map((user) => {
+                    const currentRank = user.rank[0]?.rankName ?? "Sin rango";
+
+                    return (
                 <div className="user-card" key={user.id}>
 
                     <div className="avatar-container">
@@ -126,15 +129,13 @@ function Sala() {
                         {user.name}
                     </span>
 
-                    <span
-                        className={`user-rank ${user.rank.toLowerCase()}`}
-                    >
-                        {user.rank}
+                    <span className={`user-rank ${currentRank.toLowerCase()}`}> 
+                        {currentRank}
                     </span>
                     </div>
 
                 </div>
-                ))}
+                )})}
             </div>
 
             </aside>
@@ -165,6 +166,8 @@ function Sala() {
 
                 if (!user) return null;
 
+                const currentRank = user.rank[0]?.rankName ?? "Sin rango";
+
                 return (
                     <div className="message" key={msg.id}>
 
@@ -182,10 +185,8 @@ function Sala() {
                             {user.name}
                         </span>
 
-                        <span
-                            className={`message-rank ${user.rank.toLowerCase()}`}
-                        >
-                            {user.rank}
+                        <span className={`message-rank ${currentRank.toLowerCase()}`}>
+                            {currentRank}
                         </span>
 
                         <span className="message-time">
