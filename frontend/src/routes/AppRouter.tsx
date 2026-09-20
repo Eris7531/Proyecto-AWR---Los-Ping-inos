@@ -1,17 +1,16 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import HomePage from "../pages/HomePage";
 import GamePage from "../pages/GamePage";
-import Sala from "../pages/Sala";
+import TeamRoomPage from "../pages/TeamRoom";
 import Login from "../components/Login";
 import Register from "../components/Register";
 import type {
   AuthenticatedUser,
-  PubilcUser,
+  PublicUser,
 } from "../types/user";
 
-
 interface AppRouterProps {
-  user: PubilcUser | null;
+  user: PublicUser | null;
   onLogin: (user: AuthenticatedUser) => void;
   onGoToRegister: () => void;
   onGoToLogin: () => void;
@@ -48,11 +47,6 @@ export function AppRouter({
       />
 
       <Route
-        path="/sala"
-        element={user ? <Sala /> : <Navigate to="/login" replace />}
-      />
-
-      <Route
         path="/games/:gameId"
         element={
           user ? <GamePage /> : <Navigate to="/login" replace />
@@ -60,6 +54,8 @@ export function AppRouter({
       />
 
       <Route path="*" element={<Navigate to="/" replace />} />
+      {/* <Route path="/" element={<Sala />} /> */}
+      <Route path="/equipos/:equipoId" element={<TeamRoomPage />} />
     </Routes>
   );
 }

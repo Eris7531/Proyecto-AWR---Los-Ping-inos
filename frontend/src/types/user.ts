@@ -1,12 +1,12 @@
 
-export interface PubilcUser {
+export interface PublicUser {
   id : number;
   name : string;
   avatar : string;
   rank : Array<Rank>;
 }
 
-export interface AuthenticatedUser extends PubilcUser {
+export interface AuthenticatedUser extends PublicUser {
   email : string;
   password : string;
 }

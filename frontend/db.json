@@ -67,5 +67,13 @@
       ]
     }
   ],
+  "teams": [
+    {
+      "id": 1,
+      "name": "Equipo LoL Demo",
+      "gameId": 1,
+      "memberIds": [1, 2]
+    }
+  ],
   "$schema": "./node_modules/json-server/schema.json"
 }

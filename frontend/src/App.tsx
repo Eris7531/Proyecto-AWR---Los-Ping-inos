@@ -2,17 +2,17 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PrimarySearchAppBar from "./components/Banner";
 import { AppRouter } from "./routes/AppRouter";
-import type {
-  AuthenticatedUser,
-  PubilcUser,
-} from "./types/user";
+import Login from "./components/Login";
+import Register from "./components/Register";
+import type { AuthenticatedUser, PublicUser } from "./types/user";
 
 function App() {
-  const [user, setUser] = useState<PubilcUser | null>(null);
+  const [user, setUser] = useState<PublicUser | null>(null);
+  const [showRegister, setShowRegister] = useState(false); // no sé para que es esto todavía
   const navigate = useNavigate();
-
+  
   const handleLogin = (authenticatedUser: AuthenticatedUser) => {
-    const publicUser: PubilcUser = {
+    const publicUser: PublicUser = {
       id: authenticatedUser.id,
       name: authenticatedUser.name,
       avatar: authenticatedUser.avatar,
