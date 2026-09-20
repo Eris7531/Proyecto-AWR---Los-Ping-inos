@@ -9,6 +9,7 @@ import {
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import RoomCard from "../components/RoomCard";
 import type { Room } from "../types/room";
+import TeamRoomPage from "./TeamRoom";
 
 interface GamePageProps {
   gameId?: number;
@@ -52,7 +53,7 @@ const roomsData: Room[] = [
   {
     id: 5,
     name: "Sala Competitiva",
-    currentPlayers: 2,
+    currentPlayers: 1,
     maxPlayers: 5,
     gameId: 2,
   },
@@ -88,10 +89,7 @@ function GamePage(_props: GamePageProps) {
   const rooms = roomsData.filter((room) => room.gameId === gameIdNum);
 
   const handleJoinRoom = (roomId: number) => {
-    // Aquí se implementará la lógica de unirse a una sala
-    console.log(`Joining room: ${roomId}`);
-    // Por ahora solo mostramos un alert
-    alert(`Te has unido a la sala ${roomId}`);
+    navigate("/equipos/1")
   };
 
   const handleGoBack = () => {
