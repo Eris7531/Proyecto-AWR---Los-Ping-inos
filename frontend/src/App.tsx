@@ -3,14 +3,14 @@ import {useState} from "react";
 import PrimarySearchAppBar from "./components/Banner";
 import Login from "./components/Login";
 import Register from "./components/Register";
-import type { AuthenticatedUser, PubilcUser } from "./types/user";
+import type { AuthenticatedUser, PublicUser } from "./types/user";
 
 function App() {
-  const [user, setUser] = useState<PubilcUser | null>(null);
+  const [user, setUser] = useState<PublicUser | null>(null);
   const [showRegister, setShowRegister] = useState(false);
   
   const handleLogin = (authenticatedUser: AuthenticatedUser) => {
-    const publicUser: PubilcUser = {
+    const publicUser: PublicUser = {
       id: authenticatedUser.id,
       name: authenticatedUser.name,
       avatar: authenticatedUser.avatar,

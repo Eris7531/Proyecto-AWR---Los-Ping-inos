@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import usersData from "../../db.json";
 import type { Message } from "../types/message";
-import type { PubilcUser } from "../types/user";
+import type { PublicUser } from "../types/user";
 import "../styles/Sala.css"
 
 function Sala() {
 
-    const users: PubilcUser[] = usersData.users;
+    const users: PublicUser[] = usersData.users;
 
     const [messages, setMessages] = useState<Message[]>(() => {
         const saved = localStorage.getItem("gaming-Sala");
@@ -31,7 +31,7 @@ function Sala() {
 
     const [message, setMessage] = useState("");
 
-    const currentUser: PubilcUser = users[0];
+    const currentUser: PublicUser = users[0];
 
     const messagesEndRef =
         useRef<HTMLDivElement>(null);
@@ -85,7 +85,7 @@ function Sala() {
 
     };
 
-    const getUser = (userId: number): PubilcUser | undefined => {
+    const getUser = (userId: number): PublicUser | undefined => {
         return users.find(
         (user) => user.id === userId
         );
