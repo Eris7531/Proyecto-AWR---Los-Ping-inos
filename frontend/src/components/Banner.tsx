@@ -16,10 +16,10 @@ import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import {useState} from "react";
-import type { PubilcUser } from "../types/user";
+import type { PublicUser } from "../types/user";
 
 interface BannerProps {
-    user: PubilcUser | null;
+    user: PublicUser | null;
     onLogout: () => void;
 }
 

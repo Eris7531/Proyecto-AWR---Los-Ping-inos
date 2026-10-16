@@ -2,8 +2,8 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import HomePage from "../pages/HomePage";
 import GamePage from "../pages/GamePage";
 import TeamRoomPage from "../pages/TeamRoom";
-import Login from "../components/Login";
-import Register from "../components/Register";
+import Login from "../pages/Login";
+import Register from "../pages/Register";
 import type {
   AuthenticatedUser,
   PublicUser,
@@ -29,20 +29,25 @@ export function AppRouter({
       <Route
         path="/login"
         element={
-          <Login
-            onLogin={onLogin}
-            onGoToRegister={onGoToRegister}
-          />
+          user ? (
+            <Navigate to="/" replace />
+          ) : (
+            <Login
+              onLogin={onLogin}
+              onGoToRegister={onGoToRegister}
+            />
+          )
         }
       />
 
       <Route
         path="/register"
         element={
-          <Register
-            onRegister={onLogin}
-            onGoToLogin={onGoToLogin}
-          />
+          user ? (
+            <Navigate to="/" replace />
+          ) : (
+            <Register onGoToLogin={onGoToLogin} />
+          )
         }
       />
 

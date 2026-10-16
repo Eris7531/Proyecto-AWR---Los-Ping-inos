@@ -9,7 +9,6 @@ import {
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import RoomCard from "../components/RoomCard";
 import type { Room } from "../types/room";
-import TeamRoomPage from "./TeamRoom";
 
 interface GamePageProps {
   gameId?: number;

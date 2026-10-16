@@ -1,10 +1,10 @@
 import { Box, Container, Grid, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import GamePreview from "../components/gamePreview";
-import type { PubilcUser } from "../types/user";
+import type { PublicUser } from "../types/user";
 
 interface HomePageProps {
-  user: PubilcUser | null;
+  user: PublicUser | null;
 }
 
 const games = [
