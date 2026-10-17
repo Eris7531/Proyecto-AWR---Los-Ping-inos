@@ -10,6 +10,9 @@ import middleware from "./utils/middleware";
 import usersRouter from "./controllers/users";
 import loginRouter from "./controllers/login";
 
+import gamesRouter from "./controllers/games";
+import roomsRouter from "./controllers/rooms";
+
 const app = express();
 
 mongoose.set("strictQuery", false);
@@ -34,6 +37,8 @@ app.use(express.static(clientBuildPath));
 
 app.use("/api/login", loginRouter);
 app.use("/api/users", usersRouter);
+app.use("/api/games", gamesRouter);
+app.use("/api/rooms", roomsRouter);
 
 // Las rutas API inexistentes deben responder 404,
 // no recibir el index.html de React.

@@ -60,7 +60,12 @@ export function AppRouter({
 
       <Route path="*" element={<Navigate to="/" replace />} />
       {/* <Route path="/" element={<Sala />} /> */}
-      <Route path="/equipos/:equipoId" element={<TeamRoomPage />} />
+      <Route
+        path="/equipos/:equipoId"
+        element={
+          user ? <TeamRoomPage /> : <Navigate to="/login" replace />
+        }
+      />
     </Routes>
   );
 }

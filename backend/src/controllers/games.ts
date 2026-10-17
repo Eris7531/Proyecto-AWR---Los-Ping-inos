@@ -39,7 +39,7 @@ router.post(
       const game = new Game({
         name: name.trim(),
         image: image.trim(),
-        rooms: [],
+        salas: [],
       });
 
       const savedGame = await game.save();
