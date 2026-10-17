@@ -4,6 +4,7 @@ import express from "express";
 import User from "../models/users";
 import config from "../utils/config";
 import { withUser } from "../utils/middleware";
+import { toPublicUser } from "../utils/publicUser";
 
 const router = express.Router();
 
@@ -33,7 +34,7 @@ router.post("/", async (request, response) => {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
       });
-      response.status(200).send({ username: user.username});
+      response.status(200).json(toPublicUser(user));
     }
   } else {
     response.status(401).json({
@@ -42,10 +43,12 @@ router.post("/", async (request, response) => {
   }
 });
 
-router.get("/me", withUser, async (request, response, next) => {
-  const body = request.body;
+router.get("/me", withUser, async (request, response) => {
   const user = await User.findById(request.userId);
-  response.status(200).json(user);
+  if (!user) {
+    return response.status(401).json({ error: "user no longer exists" });
+  }
+  return response.status(200).json(toPublicUser(user));
 });
 
 

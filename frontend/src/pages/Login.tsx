@@ -1,10 +1,10 @@
 
-import { useState, type SubmitEvent } from "react";
-import type { AuthenticatedUser } from "../types/user";
+import { useState, type FormEvent } from "react";
+import type { User } from "../types/user";
 import "../styles/LogReg.css";
 
 interface LoginProps {
-  onLogin: (user: AuthenticatedUser) => void;
+  onLogin: (user: User) => void;
   onGoToRegister: () => void;
 }
 
@@ -14,7 +14,7 @@ function Login({ onLogin, onGoToRegister }: LoginProps) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError("");
     setLoading(true);
@@ -43,7 +43,7 @@ function Login({ onLogin, onGoToRegister }: LoginProps) {
         sessionStorage.setItem("csrfToken", csrfToken);
       }
 
-      onLogin(data as AuthenticatedUser);
+      onLogin(data as User);
     } catch (err) {
       setError(
         err instanceof Error

@@ -1,5 +1,5 @@
 
-import { useState, type SubmitEvent } from "react";
+import { useState, type FormEvent } from "react";
 import "../styles/LogReg.css";
 
 interface RegisterProps {
@@ -14,7 +14,7 @@ function Register({ onGoToLogin }: RegisterProps) {
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError("");
     setSuccess("");

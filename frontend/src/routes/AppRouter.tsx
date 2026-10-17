@@ -4,14 +4,12 @@ import GamePage from "../pages/GamePage";
 import TeamRoomPage from "../pages/TeamRoom";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
-import type {
-  AuthenticatedUser,
-  PublicUser,
-} from "../types/user";
+import type {User} from "../types/user";
+import UserProfile from "../pages/UserProfile";
 
 interface AppRouterProps {
-  user: PublicUser | null;
-  onLogin: (user: AuthenticatedUser) => void;
+  user: User | null;
+  onLogin: (user: User) => void;
   onGoToRegister: () => void;
   onGoToLogin: () => void;
 }
@@ -58,7 +56,10 @@ export function AppRouter({
         }
       />
 
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route
+        path="/usuarios/:userId"
+        element={<UserProfile user={user} />}
+      />
       {/* <Route path="/" element={<Sala />} /> */}
       <Route
         path="/equipos/:equipoId"
