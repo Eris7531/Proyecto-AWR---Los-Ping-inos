@@ -1,32 +1,12 @@
 import { Box, Container, Grid, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import GamePreview from "../components/gamePreview";
-import type { PublicUser } from "../types/user";
+import type { User } from "../types/user";
+import { games } from "../data/games";
 
 interface HomePageProps {
-  user: PublicUser | null;
+  user: User | null;
 }
-
-const games = [
-  {
-    id: 1,
-    name: "Counter-Strike 2",
-    image: "/csgo.jpeg",
-    usersInRooms: 0,
-  },
-  {
-    id: 2,
-    name: "League of Legends",
-    image: "/Lol.webp",
-    usersInRooms: 0,
-  },
-  {
-    id: 3,
-    name: "Valorant",
-    image: "/ValoSgv.png",
-    usersInRooms: 0,
-  },
-];
 
 function HomePage({ user }: HomePageProps) {
   const navigate = useNavigate();

@@ -1,27 +1,54 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PrimarySearchAppBar from "./components/Banner";
 import { AppRouter } from "./routes/AppRouter";
-import type { AuthenticatedUser, PublicUser } from "./types/user";
+import type { User } from "./types/user";
 
 function App() {
-  const [user, setUser] = useState<PublicUser | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const navigate = useNavigate();
 
-  const handleLogin = (authenticatedUser: AuthenticatedUser) => {
-    const publicUser: PublicUser = {
-      id: authenticatedUser.id,
-      name: authenticatedUser.name,
-      avatar: authenticatedUser.avatar,
-      rank: authenticatedUser.rank,
+  useEffect(() => {
+    let active = true;
+
+    const restoreSession = async () => {
+      try {
+        const response = await fetch("/api/login/me", {
+          credentials: "include",
+        });
+        if (!response.ok) return;
+
+        const csrfToken = response.headers.get("X-CSRF-Token");
+        if (csrfToken) sessionStorage.setItem("csrfToken", csrfToken);
+
+        const currentUser = (await response.json()) as User;
+        if (active) setUser(currentUser);
+      } catch {
+        if (active) setUser(null);
+      }
     };
 
-    setUser(publicUser);
+    void restoreSession();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const handleLogin = (loggedInUser: User) => {
+    setUser(loggedInUser);
     navigate("/");
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await fetch("/api/login/logout", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "X-CSRF-Token": sessionStorage.getItem("csrfToken") ?? "",
+        },
+      }).catch(() => undefined);
+    sessionStorage.removeItem("csrfToken");
     setUser(null);
     navigate("/login");
   };
@@ -30,7 +57,7 @@ function App() {
     <>
       <PrimarySearchAppBar
         user={user}
-        onLogout={handleLogout}
+        onLogout={() => void handleLogout()}
       />
 
       <AppRouter

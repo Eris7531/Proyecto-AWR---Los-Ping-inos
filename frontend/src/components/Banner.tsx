@@ -16,10 +16,11 @@ import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import {useState} from "react";
-import type { PublicUser } from "../types/user";
+import type { User } from "../types/user";
+import { useNavigate } from "react-router-dom";
 
 interface BannerProps {
-    user: PublicUser | null;
+    user: User | null;
     onLogout: () => void;
 }
 
@@ -70,6 +71,8 @@ export default function PrimarySearchAppBar({user, onLogout}: BannerProps) {
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
+  const navigate = useNavigate();
+
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -105,15 +108,20 @@ export default function PrimarySearchAppBar({user, onLogout}: BannerProps) {
       onClose={handleMenuClose}
     >
       <MenuItem>
-        {user?.name}
-      </MenuItem>
-
-      <MenuItem onClick={handleMenuClose}>
-        Mi cuenta
+        {user?.username}
       </MenuItem>
 
       <MenuItem onClick={onLogout}>
         Cerrar sesión
+      </MenuItem>
+
+      <MenuItem
+        onClick={() => {
+        handleMenuClose();
+        if (user) navigate(`/usuarios/${user.id}`);
+      }}
+      >
+        Mi cuenta
       </MenuItem>
     </Menu>
   );
@@ -173,7 +181,7 @@ export default function PrimarySearchAppBar({user, onLogout}: BannerProps) {
         >
           <AccountCircle />
         </IconButton>
-        <p>{user ? user.name : "Iniciar sesión"}</p>
+        <p>{user ? user.username : "Iniciar sesión"}</p>
       </MenuItem>
     </Menu>
   );

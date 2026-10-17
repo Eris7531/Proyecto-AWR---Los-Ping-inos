@@ -3,14 +3,14 @@ import type { ChangeEvent, KeyboardEvent } from "react";
 import { Box, IconButton, TextField, Typography } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import type { Message } from "../../types/message";
-import type { PublicUser } from "../../types/user";
+import type { User } from "../../types/user";
 import MessageItem from "./MessageItem";
 
 interface ChatBoxProps {
 	messages: Message[];
-	usersById: Map<number, PublicUser>;
+	usersById: Map<string, User>;
 	gameId: number;
-	currentUserId?: number;
+	currentUserId?: string;
 	onSend: (text: string) => void;
 }
 

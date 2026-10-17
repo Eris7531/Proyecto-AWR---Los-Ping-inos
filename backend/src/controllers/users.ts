@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import express from "express";
 import User from "../models/users";
 import { withUser } from "../utils/middleware";
+import { toPublicUser } from "../utils/publicUser";
 
 const router = express.Router();
 
@@ -18,7 +19,19 @@ router.get("/", withUser, async (_request, response, next) => {
         important: 1,
       });
 
-    return response.json(users);
+    return response.json(users.map(toPublicUser));
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.get("/:id", async (request, response, next) => {
+  try {
+    const user = await User.findById(request.params.id);
+    if (!user) {
+      return response.status(404).json({ error: "user not found" });
+    }
+    return response.json(toPublicUser(user));
   } catch (error) {
     return next(error);
   }
@@ -62,12 +75,7 @@ router.post("/", async (request, response, next) => {
 
     const savedUser = await user.save();
 
-    return response.status(201).json({
-      id: savedUser._id.toString(),
-      username: savedUser.username,
-  //    avatar: savedUser.avatar,
-  //    rank: savedUser.rank,
-    });
+    return response.status(201).json(toPublicUser(savedUser));
   } catch (error) {
     return next(error);
   }

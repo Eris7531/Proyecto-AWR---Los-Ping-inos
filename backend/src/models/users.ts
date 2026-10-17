@@ -1,15 +1,31 @@
 import mongoose from "mongoose";
+import type { Rank } from "../types/user";
 
 interface UserData {
-  id: string;
   username: string;
   passwordHash: string;
+  avatar: string | null;
+  rank: Rank[];
   notes: mongoose.Types.ObjectId[];
 }
+
+const rankSchema = new mongoose.Schema<Rank>(
+  {
+    id: { type: String, required: true },
+    game: {
+      id: { type: String, required: true },
+      gameName: { type: String, required: true },
+    },
+    rankName: { type: String, required: true },
+  },
+  { _id: false },
+);
 
 const userSchema = new mongoose.Schema<UserData>({
   username: { type: String, required: true, unique: true },
   passwordHash: String,
+  avatar: { type: String, default: null },
+  rank: { type: [rankSchema], default: [] },
   notes: [
     {
       type: mongoose.Schema.Types.ObjectId,

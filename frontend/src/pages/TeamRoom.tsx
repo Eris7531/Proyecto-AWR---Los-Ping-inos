@@ -3,7 +3,7 @@ import { Box, Paper, Stack, Typography } from "@mui/material";
 import MemberList from "../components/teamroom/MemberList";
 import ChatBox from "../components/teamroom/ChatBox";
 import { useTeamRoom } from "../hooks/useTeamRoom";
-import type { PublicUser } from "../types/user";
+import type { User } from "../types/user";
 
 interface TeamRoomParams extends Record<string, string | undefined> {
     equipoId?: string;
@@ -14,7 +14,7 @@ export default function TeamRoomPage() {
     const { team, members, usersById, messages, sendMessage } = useTeamRoom(equipoId ?? "");
 
     // reemplazar por usauario real cuando exista la bbdd
-    const currentUser: PublicUser | undefined = members[0];
+    const currentUser: User | undefined = members[0];
 
     const handleSend = (text: string): void => {
         if (!currentUser) return;

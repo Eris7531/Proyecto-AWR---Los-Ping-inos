@@ -10,16 +10,10 @@ Cada sala muestra:
 - 5 círculos que representan la capacidad máxima (azules = jugadores, grises = espacios libres)
 - Botón "Unirse" (deshabilitado si la sala está llena)
 
-## Comando para levantar la base de datos del db.json.
+## Comando para ejecutar la página:
 
-hay que abrir dos términales, uno para visualizar la vista del registro y del banner con el comando:
+hay que abrir dos términales, una en ../backend y la otra en ../frontend. En ambas debemos ejecutar el siguiente comando:
 
 ```cmd
     npm run dev 
 ```
-Mientras que, en el segundo términal debemos ejecutar: 
-
-```cmd
-    npx json-server --watch db.json --port 3001
-```
-Esto es, para poder levantar la base de datos usando el archivo db.json.

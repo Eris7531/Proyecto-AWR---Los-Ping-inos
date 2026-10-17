@@ -1,24 +1,24 @@
 import { useEffect,  useState } from "react";
 import db from "../../db.json";
 import type { Message } from "../types/message";
-import type { PublicUser } from "../types/user";
+import type { User } from "../types/user";
 import type { Team } from "../types/team";
 
 //  placeholders que se reemplazan por llamadas a servicios cuando exista backend
-const ALL_USERS: PublicUser[] = db.users;
+const ALL_USERS: User[] = db.users;
 const ALL_TEAMS: Team[] = db.teams;
-const USERS_BY_ID = new Map<number, PublicUser>(ALL_USERS.map((u) => [u.id, u]));
+const USERS_BY_ID = new Map<string, User>(ALL_USERS.map((u) => [u.id, u]));
 
 const SEED_MESSAGES: Message[] = [
     {
         id: 1,
-        userId: 1,
+        userId: "1",
         text: "¿Alguien juega?",
         timestamp: new Date(Date.now() - 120_000).toISOString(),
     },
     {
         id: 2,
-        userId: 2,
+        userId: "2",
         text: "Sí, yo estoy disponible.",
         timestamp: new Date(Date.now() - 60_000).toISOString(),
     },
@@ -37,18 +37,18 @@ function loadMessages(teamId: string): Message[] {
 
 interface UseTeamRoomResult {
   team: Team | undefined;
-  members: PublicUser[];
-  usersById: Map<number, PublicUser>;
+    members: User[];
+    usersById: Map<string, User>;
   messages: Message[];
-  sendMessage: (userId: number, text: string) => void;
+    sendMessage: (userId: string, text: string) => void;
 }
 
 export function useTeamRoom(teamId: string): UseTeamRoomResult {
     const team = ALL_TEAMS.find((t) => t.id === Number(teamId));
 
-    const members: PublicUser[] = (team?.memberIds ?? [])
+    const members: User[] = (team?.memberIds ?? [])
         .map((id) => USERS_BY_ID.get(id))
-        .filter((u): u is PublicUser => u !== undefined);
+        .filter((u): u is User => u !== undefined);
 
     const [messages, setMessages] = useState<Message[]>(() => loadMessages(teamId));
 
@@ -56,7 +56,7 @@ export function useTeamRoom(teamId: string): UseTeamRoomResult {
         setMessages(loadMessages(teamId));
     }, [teamId]);
 
-    const sendMessage = (userId: number, text: string): void => {
+    const sendMessage = (userId: string, text: string): void => {
         const next: Message[] = [
         ...messages,
         {

@@ -1,7 +1,7 @@
 
 export interface Message {
   id: number;
-  userId: number;
+  userId: string;
   text: string;
   timestamp: string;
 }
