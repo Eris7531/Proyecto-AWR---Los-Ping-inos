@@ -1,0 +1,28 @@
+### Variables Globales
+@roomId = 6ad3f0c38aa0608e1796175e
+
+### ==============================================
+### 1. INICIAR SESIÓN (Requerido para la cookie)
+### ==============================================
+POST http://127.0.0.1:3001/api/login
+Content-Type: application/json
+
+{
+  "username": "JugadorPrueba",
+  "password": "password123"
+}
+
+### ==============================================
+### 2. ENVIAR UN MENSAJE (POST)
+### ==============================================
+POST {{baseUrl}}/rooms/{{roomId}}/messages
+Content-Type: application/json
+
+{
+  "content": "El endpoint del chat está funcionando perfecto "
+}
+
+### ==============================================
+### 3. VER EL HISTORIAL DE LA SALA (GET)
+### ==============================================
+GET {{baseUrl}}/rooms/{{roomId}}/messages

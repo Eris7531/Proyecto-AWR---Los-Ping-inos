@@ -2,10 +2,11 @@
 import mongoose from "mongoose";
 import config from "../utils/config";
 import seedGames from "./seedGames";
-
+import seedRooms from "./seedRooms";
+import seedUsers from "./seedUsers";
 // Añadir nuevas funciones de seed aquí cuando existan:
-// import seedUsers from "./seedUsers";
-// import seedRooms from "./seedRooms";
+
+
 // import seedChats from "./seedChats";
 const runSeeds = async (): Promise<void> => {
   try {
@@ -20,10 +21,10 @@ const runSeeds = async (): Promise<void> => {
     console.log("Starting database seeds...");
 
     await seedGames();
-
+    await seedRooms();
+    await seedUsers();
     // Activar cuando estén implementados:
-    // await seedUsers();
-    // await seedRooms();
+    
     // await seedChats();
 
     console.log("All seeds completed successfully.");

@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import crypto from "crypto";
 import express from "express";
 import User from "../models/users";
 import config from "../utils/config";
