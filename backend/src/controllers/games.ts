@@ -2,6 +2,7 @@
 import express, { NextFunction, Request, Response } from "express";
 import Game from "../models/games";
 import Room from "../models/room";
+import rankOptions from "../data/rankOptions";
 
 const router = express.Router();
 
@@ -28,6 +29,27 @@ router.get(
       );
     } catch (error) {
       next(error);
+    }
+  }
+);
+
+router.get(
+  "/:id/ranks",
+  async (request: Request, response: Response, next: NextFunction) => {
+    try {
+      const game = await Game.findById(request.params.id);
+
+      if (!game) {
+        return response.status(404).json({ error: "game not found" });
+      }
+
+      return response.json({
+        gameId: game._id.toString(),
+        gameName: game.name,
+        ranks: rankOptions[game.name] ?? [],
+      });
+    } catch (error) {
+      return next(error);
     }
   }
 );

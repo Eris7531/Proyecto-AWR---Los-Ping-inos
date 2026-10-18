@@ -35,6 +35,7 @@ app.use(cookieParser());
 app.use(middleware.requestLogger);
 
 app.use(express.static(clientBuildPath));
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 app.use("/api/login", loginRouter);
 app.use("/api/users", usersRouter);

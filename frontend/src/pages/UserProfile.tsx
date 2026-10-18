@@ -25,18 +25,42 @@ import {
 } from "@mui/material";
 import SettingsIcon from "@mui/icons-material/Settings";
 import UserSettings from "../components/UserSettings";
-import { games } from "../data/games";
+import { apiRequest } from "../services/api";
 import type { User } from "../types/user";
+
+interface ProfileGame {
+  id: string;
+  name: string;
+  image: string;
+}
 
 interface UserProfileProps {
   user: User | null;
+  onUserUpdated: (user: User) => void;
 }
 
-export default function UserProfile({ user }: UserProfileProps) {
+export default function UserProfile({ user, onUserUpdated }: UserProfileProps) {
   const { userId } = useParams<{ userId: string }>();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [profile, setProfile] = useState<User | null>(null);
+  const [games, setGames] = useState<ProfileGame[]>([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+
+    apiRequest<ProfileGame[]>("/games")
+      .then((result) => {
+        if (active) setGames(result);
+      })
+      .catch(() => {
+        if (active) setGames([]);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -147,9 +171,7 @@ export default function UserProfile({ user }: UserProfileProps) {
               </TableRow>
             ) : (
               profile.rank.map((rank) => {
-                const game = games.find(
-                  (candidate) => candidate.name === rank.game.gameName,
-                );
+                const game = games.find((candidate) => candidate.id === rank.game.id);
 
                 return (
                   <TableRow key={rank.id}>
@@ -191,7 +213,13 @@ export default function UserProfile({ user }: UserProfileProps) {
       >
         <DialogTitle>Configuración del perfil</DialogTitle>
         <DialogContent>
-          <UserSettings />
+          <UserSettings
+            user={profile}
+            onUserUpdated={(updated) => {
+              setProfile(updated);
+              onUserUpdated(updated);
+            }}
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setSettingsOpen(false)}>Cerrar</Button>

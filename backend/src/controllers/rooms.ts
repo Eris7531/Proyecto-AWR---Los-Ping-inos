@@ -49,6 +49,21 @@ router.get("/", async (req, res, next) => {
   }
 });
 
+router.get("/current", async (req, res, next) => {
+  try {
+    const room = await Room.findOne({ users: req.userId })
+      .select("_id name updatedAt")
+      .sort({ updatedAt: -1 })
+      .lean();
+
+    return res.json({
+      room: room ? { id: room._id.toString(), name: room.name } : null,
+    });
+  } catch (error) {
+    return next(error);
+  }
+});
+
 // GET /api/rooms/:id
 // El detalle y la lista de integrantes solo se entregan a miembros.
 router.get("/:id", async (req, res, next) => {
@@ -174,11 +189,33 @@ router.post("/:id/join", async (req, res, next) => {
     }
 
     const userId = user._id.toString();
+    const currentRooms = await Room.find({ users: user._id })
+      .select("_id name")
+      .sort({ updatedAt: -1 });
 
     if (room.users.some((id) => id.toString() === userId)) {
+      await Room.updateMany(
+        { _id: { $ne: room._id }, users: user._id },
+        { $pull: { users: user._id } }
+      );
+
       return res.status(200).json({
         message: "Ya perteneces a esta sala",
         roomId: room._id.toString(),
+      });
+    }
+
+    const currentRoom = currentRooms.find(
+      (candidate) => candidate._id.toString() !== room._id.toString()
+    );
+
+    if (currentRoom && req.body?.replaceExisting !== true) {
+      return res.status(409).json({
+        error: "confirmation required",
+        currentRoom: {
+          id: currentRoom._id.toString(),
+          name: currentRoom.name,
+        },
       });
     }
 
@@ -197,6 +234,19 @@ router.post("/:id/join", async (req, res, next) => {
       return res.status(409).json({
         error: "La sala está llena o ya no está disponible",
       });
+    }
+
+    try {
+      await Room.updateMany(
+        { _id: { $ne: updatedRoom._id }, users: user._id },
+        { $pull: { users: user._id } }
+      );
+    } catch (error) {
+      await Room.updateOne(
+        { _id: updatedRoom._id },
+        { $pull: { users: user._id } }
+      );
+      throw error;
     }
 
     return res.status(200).json({

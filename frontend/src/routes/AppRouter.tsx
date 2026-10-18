@@ -10,6 +10,7 @@ import UserProfile from "../pages/UserProfile";
 interface AppRouterProps {
   user: User | null;
   onLogin: (user: User) => void;
+  onUserUpdated: (user: User) => void;
   onGoToRegister: () => void;
   onGoToLogin: () => void;
 }
@@ -17,6 +18,7 @@ interface AppRouterProps {
 export function AppRouter({
   user,
   onLogin,
+  onUserUpdated,
   onGoToRegister,
   onGoToLogin,
 }: AppRouterProps) {
@@ -58,7 +60,7 @@ export function AppRouter({
 
       <Route
         path="/usuarios/:userId"
-        element={<UserProfile user={user} />}
+        element={<UserProfile user={user} onUserUpdated={onUserUpdated} />}
       />
       {/* <Route path="/" element={<Sala />} /> */}
       <Route

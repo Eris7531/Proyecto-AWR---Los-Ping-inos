@@ -2,8 +2,14 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   Alert,
+  Button,
   Box,
   Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Grid,
   IconButton,
   Typography,
@@ -13,6 +19,20 @@ import RoomCard from "../components/RoomCard";
 import { apiRequest } from "../services/api";
 import type { Game, Room } from "../types/room";
 
+interface CurrentRoom {
+  id: string;
+  name: string;
+}
+
+interface CurrentRoomResponse {
+  room: CurrentRoom | null;
+}
+
+interface JoinConfirmation {
+  targetRoom: Room;
+  currentRoom: CurrentRoom;
+}
+
 function GamePage() {
   const { gameId } = useParams<{ gameId: string }>();
   const navigate = useNavigate();
@@ -21,6 +41,9 @@ function GamePage() {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [joinConfirmation, setJoinConfirmation] =
+    useState<JoinConfirmation | null>(null);
+  const [joining, setJoining] = useState(false);
 
   useEffect(() => {
     if (!gameId) {
@@ -74,14 +97,33 @@ function GamePage() {
     };
   }, [gameId]);
 
-  const handleJoinRoom = async (roomId: string) => {
+  const handleJoinRoom = async (roomId: string, replaceExisting = false) => {
     try {
       setError("");
+      setJoining(true);
 
-      await apiRequest(`/rooms/${roomId}/join`, {
+      const targetRoom = rooms.find((room) => room.id === roomId);
+      if (!targetRoom) throw new Error("No se encontró la sala seleccionada.");
+
+      const { room: currentRoom } = await apiRequest<CurrentRoomResponse>(
+        "/rooms/current",
+      );
+
+      if (
+        currentRoom &&
+        currentRoom.id !== roomId &&
+        !replaceExisting
+      ) {
+        setJoinConfirmation({ targetRoom, currentRoom });
+        return;
+      }
+
+      await apiRequest(`/rooms/${encodeURIComponent(roomId)}/join`, {
         method: "POST",
+        body: JSON.stringify({ replaceExisting }),
       });
 
+      setJoinConfirmation(null);
       navigate(`/equipos/${roomId}`);
     } catch (err) {
       setError(
@@ -89,6 +131,8 @@ function GamePage() {
           ? err.message
           : "No se pudo ingresar a la sala."
       );
+    } finally {
+      setJoining(false);
     }
   };
 
@@ -142,6 +186,41 @@ function GamePage() {
           )}
         </>
       )}
+
+      <Dialog
+        open={joinConfirmation !== null}
+        onClose={() => {
+          if (!joining) setJoinConfirmation(null);
+        }}
+        aria-labelledby="join-room-title"
+      >
+        <DialogTitle id="join-room-title">¿Cambiar de sala?</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Ya estás en «{joinConfirmation?.currentRoom.name}». Si te unes a
+            «{joinConfirmation?.targetRoom.name}», saldrás de la sala actual.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setJoinConfirmation(null)}
+            disabled={joining}
+          >
+            Cancelar
+          </Button>
+          <Button
+            variant="contained"
+            onClick={() => {
+              if (joinConfirmation) {
+                void handleJoinRoom(joinConfirmation.targetRoom.id, true);
+              }
+            }}
+            disabled={joining}
+          >
+            {joining ? "Ingresando..." : "Salir y unirme"}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 }

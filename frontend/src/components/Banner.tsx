@@ -17,7 +17,12 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import {useState} from "react";
 import type { User } from "../types/user";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import {
+  Link as RouterLink,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 
 interface BannerProps {
     user: User | null;
@@ -212,8 +217,16 @@ export default function PrimarySearchAppBar({user, onLogout}: BannerProps) {
           <Typography
             variant="h6"
             noWrap
-            component="div"
-            sx={{ display: { xs: 'none', sm: 'block' } }}
+            component={RouterLink}
+            to="/"
+            aria-label="Ping-Gamers, volver al inicio"
+            sx={{
+              display: { xs: 'none', sm: 'block' },
+              color: "inherit",
+              textDecoration: "none",
+              cursor: "pointer",
+              "&:hover": { opacity: 0.85 },
+            }}
           >
             Ping-Gamers
           </Typography>

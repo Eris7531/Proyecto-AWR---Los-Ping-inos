@@ -40,6 +40,10 @@ function App() {
     navigate("/");
   };
 
+  const handleUserUpdated = (updatedUser: User) => {
+    setUser(updatedUser);
+  };
+
   const handleLogout = async () => {
     await fetch("/api/login/logout", {
         method: "POST",
@@ -63,6 +67,7 @@ function App() {
       <AppRouter
         user={user}
         onLogin={handleLogin}
+        onUserUpdated={handleUserUpdated}
         onGoToRegister={() => navigate("/register")}
         onGoToLogin={() => navigate("/login")}
       />
