@@ -17,5 +17,5 @@ Luego para correr el backend
 Mientras que, en el segundo términal debemos ejecutar en frontend: 
 
 ```cmd
-    npx json-server --watch db.json --port 3001
+    npm run dev
 ```
