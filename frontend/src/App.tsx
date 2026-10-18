@@ -20,7 +20,7 @@ function App() {
         if (!response.ok) return;
 
         const csrfToken = response.headers.get("X-CSRF-Token");
-        if (csrfToken) sessionStorage.setItem("csrfToken", csrfToken);
+        if (csrfToken) localStorage.setItem("csrfToken", csrfToken);
 
         const currentUser = (await response.json()) as User;
         if (active) setUser(currentUser);
@@ -49,10 +49,10 @@ function App() {
         method: "POST",
         credentials: "include",
         headers: {
-          "X-CSRF-Token": sessionStorage.getItem("csrfToken") ?? "",
+          "X-CSRF-Token": localStorage.getItem("csrfToken") ?? "",
         },
       }).catch(() => undefined);
-    sessionStorage.removeItem("csrfToken");
+    localStorage.removeItem("csrfToken");
     setUser(null);
     navigate("/login");
   };

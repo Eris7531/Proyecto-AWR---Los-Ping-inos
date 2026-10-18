@@ -40,7 +40,7 @@ function Login({ onLogin, onGoToRegister }: LoginProps) {
       const csrfToken = response.headers.get("X-CSRF-Token");
 
       if (csrfToken) {
-        sessionStorage.setItem("csrfToken", csrfToken);
+        localStorage.setItem("csrfToken", csrfToken);
       }
 
       onLogin(data as User);

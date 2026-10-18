@@ -15,7 +15,7 @@ export async function apiRequest<T>(
   }
 
   if (!["GET", "HEAD", "OPTIONS"].includes(method)) {
-    const csrfToken = sessionStorage.getItem("csrfToken");
+    const csrfToken = localStorage.getItem("csrfToken");
 
     if (csrfToken) {
       headers.set("X-CSRF-Token", csrfToken);
@@ -32,7 +32,7 @@ export async function apiRequest<T>(
   const refreshedCsrf = response.headers.get("X-CSRF-Token");
 
   if (refreshedCsrf) {
-    sessionStorage.setItem("csrfToken", refreshedCsrf);
+    localStorage.setItem("csrfToken", refreshedCsrf);
   }
 
   const data = await response.json().catch(() => null);
