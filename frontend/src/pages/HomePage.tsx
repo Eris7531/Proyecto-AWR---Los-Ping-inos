@@ -1,9 +1,7 @@
-import { useEffect, useState } from "react";
 import { Box, Container, Grid, Typography } from "@mui/material";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import GamePreview from "../components/gamePreview";
-import { apiRequest } from "../services/api";
-import type { Game } from "../types/room";
+import GamePreview from "../components/GamePreview";
+import { useGames } from "../hooks/useGames";
 import type { User } from "../types/user";
 
 interface HomePageProps {
@@ -12,20 +10,13 @@ interface HomePageProps {
 
 function HomePage({ user }: HomePageProps) {
   const navigate = useNavigate();
-  const [games, setGames] = useState<Game[]>([]);
-  const [error, setError] = useState("");
+  const { games, loading, error } = useGames();
   const [searchParams] = useSearchParams();
 
   const search = (searchParams.get("q") ?? "").trim().toLowerCase();
   const visibleGames = games.filter((game) =>
     game.name.toLowerCase().includes(search)
   );
-
-  useEffect(() => {
-    apiRequest<Game[]>("/games")
-      .then(setGames)
-      .catch((err: Error) => setError(err.message));
-  }, []);
 
   const handleGameSelect = (gameId: string) => {
     if (!user) {
@@ -64,7 +55,7 @@ function HomePage({ user }: HomePageProps) {
         </Grid>
       </Box>
 
-      {!error && games.length === 0 && (
+      {loading && (
         <Typography sx={{ mt: 3 }}>
           Cargando juegos...
         </Typography>
