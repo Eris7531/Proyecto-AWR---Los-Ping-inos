@@ -17,7 +17,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import {useState} from "react";
 import type { User } from "../types/user";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
 interface BannerProps {
     user: User | null;
@@ -72,6 +72,18 @@ export default function PrimarySearchAppBar({user, onLogout}: BannerProps) {
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+
+  const search = searchParams.get("q") ?? "";
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    navigate(
+      { pathname: "/", search: value ? `?q=${encodeURIComponent(value)}` : "" },
+      { replace: location.pathname === "/" }
+    );
+  };
 
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -212,6 +224,8 @@ export default function PrimarySearchAppBar({user, onLogout}: BannerProps) {
             <StyledInputBase
               placeholder="¿Qué buscas?"
               inputProps={{ 'aria-label': 'search' }}
+              value={search}
+              onChange={handleSearchChange}
             />
           </Search>
           <Box sx={{ flexGrow: 1 }} />
