@@ -7,6 +7,7 @@ import path from "node:path";
 import logger from "./utils/logger";
 import config from "./utils/config";
 import middleware from "./utils/middleware";
+import chatController from "./controllers/message";
 import usersRouter from "./controllers/users";
 import loginRouter from "./controllers/login";
 
@@ -38,6 +39,7 @@ app.use(express.static(clientBuildPath));
 app.use("/api/login", loginRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/games", gamesRouter);
+app.use("/api/rooms", chatController);
 app.use("/api/rooms", roomsRouter);
 
 // Las rutas API inexistentes deben responder 404,

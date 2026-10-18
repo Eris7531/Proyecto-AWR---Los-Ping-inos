@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import express from "express";
+import crypto from "crypto";
 import User from "../models/users";
 import config from "../utils/config";
 import { withUser } from "../utils/middleware";

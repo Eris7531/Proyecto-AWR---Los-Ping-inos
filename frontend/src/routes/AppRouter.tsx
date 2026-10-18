@@ -64,7 +64,11 @@ export function AppRouter({
       <Route
         path="/equipos/:equipoId"
         element={
-          user ? <TeamRoomPage /> : <Navigate to="/login" replace />
+          user ? (
+            <TeamRoomPage currentUserId={user.id} />
+          ) : (
+            <Navigate to="/login" replace />
+          )
         }
       />
     </Routes>

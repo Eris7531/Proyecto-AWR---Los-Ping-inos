@@ -15,14 +15,24 @@ import {
 } from "@mui/material";
 import { apiRequest } from "../services/api";
 import type { RoomDetail } from "../types/room";
+import ChatBox from "../components/teamroom/ChatBox";
+import { useRoomMessages } from "../hooks/useRoomMessages";
 
-export default function TeamRoomPage() {
+interface TeamRoomPageProps {
+  currentUserId: string;
+}
+
+export default function TeamRoomPage({
+  currentUserId,
+}: TeamRoomPageProps) {
   const { equipoId } = useParams<{ equipoId: string }>();
   const navigate = useNavigate();
 
   const [room, setRoom] = useState<RoomDetail | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+
+  const chat = useRoomMessages(equipoId ?? "");
 
   useEffect(() => {
     if (!equipoId) {
@@ -32,6 +42,9 @@ export default function TeamRoomPage() {
     }
 
     let cancelled = false;
+
+    setLoading(true);
+    setError("");
 
     apiRequest<RoomDetail>(
       `/rooms/${encodeURIComponent(equipoId)}`
@@ -55,14 +68,17 @@ export default function TeamRoomPage() {
     if (!equipoId) return;
 
     try {
-      await apiRequest(`/rooms/${encodeURIComponent(equipoId)}/leave`, {
-        method: "POST",
-      });
+      await apiRequest(
+        `/rooms/${encodeURIComponent(equipoId)}/leave`,
+        { method: "POST" }
+      );
 
       navigate("/");
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "No se pudo salir de la sala."
+        err instanceof Error
+          ? err.message
+          : "No se pudo salir de la sala"
       );
     }
   };
@@ -101,17 +117,14 @@ export default function TeamRoomPage() {
         direction={{ xs: "column", sm: "row" }}
         spacing={2}
         sx={{
-            mb: 3,
-            justifyContent: "space-between",
-            alignItems: {
-            xs: "stretch",
-            sm: "center",
-            },
+          mb: 3,
+          justifyContent: "space-between",
+          alignItems: { xs: "stretch", sm: "center" },
         }}
       >
         <Box>
           <Typography variant="overline">{gameName}</Typography>
-          <Typography variant="h4" component="h1" sx={{ fontWeight: "bold" }}>
+          <Typography variant="h4" component="h1" sx={{ fontWeight: 700 }}>
             {room.name}
           </Typography>
           <Typography color="text.secondary">
@@ -125,7 +138,7 @@ export default function TeamRoomPage() {
       </Stack>
 
       <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
-        <Paper variant="outlined" sx={{ p: 2, width: { md: 320 } }}>
+        <Paper variant="outlined" sx={{ p: 2, width: { md: 300 } }}>
           <Typography variant="h6">
             Integrantes ({room.users.length}/{room.maxPlayers})
           </Typography>
@@ -134,7 +147,10 @@ export default function TeamRoomPage() {
             {room.users.map((member) => (
               <ListItem key={member._id}>
                 <ListItemAvatar>
-                  <Avatar src={member.avatar} alt={member.username}>
+                  <Avatar
+                    src={member.avatar ?? undefined}
+                    alt={member.username}
+                  >
                     {member.username.charAt(0).toUpperCase()}
                   </Avatar>
                 </ListItemAvatar>
@@ -144,12 +160,19 @@ export default function TeamRoomPage() {
           </List>
         </Paper>
 
-        <Paper variant="outlined" sx={{ p: 3, flex: 1, minHeight: 300 }}>
-          <Typography variant="h6">Chat de la sala</Typography>
-          <Typography color="text.secondary" sx={{ mt: 2 }}>
-            El chat se conectará al servicio protegido de mensajes cuando
-            esté integrado con el backend.
+        <Paper variant="outlined" sx={{ p: 2, flex: 1, minWidth: 0 }}>
+          <Typography variant="h6" sx={{ mb: 2 }}>
+            Chat de la sala
           </Typography>
+
+          <ChatBox
+            messages={chat.messages}
+            currentUserId={currentUserId}
+            loading={chat.loading}
+            sending={chat.sending}
+            error={chat.error}
+            onSend={chat.sendMessage}
+          />
         </Paper>
       </Stack>
     </Box>
