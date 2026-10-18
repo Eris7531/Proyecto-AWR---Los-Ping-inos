@@ -5,7 +5,6 @@ import GamePreview from "../components/gamePreview";
 import { apiRequest } from "../services/api";
 import type { Game } from "../types/room";
 import type { User } from "../types/user";
-import {games} from "../data/games";
 
 interface HomePageProps {
   user: User | null;
@@ -51,7 +50,7 @@ function HomePage({ user }: HomePageProps) {
                 id={game.id}
                 name={game.name}
                 image={game.image}
-                usersInRooms={0}
+                usersInRooms={game.usersInRooms ?? 0}
                 onClick={() => handleGameSelect(game.id)}
               />
             </Grid>

@@ -1,16 +1,31 @@
 
 import express, { NextFunction, Request, Response } from "express";
 import Game from "../models/games";
+import Room from "../models/room";
 
 const router = express.Router();
 
 // Obtener todos los juegos
 router.get(
   "/",
-  async (_request: Request, response: Response, next: NextFunction) => {
+  async (request: Request, response: Response, next: NextFunction) => {
     try {
       const games = await Game.find({}).sort({ name: 1 });
-      response.status(200).json(games);
+
+      // Cantidad de usuarios en salas, agrupada por juego.
+      const counts = await Room.aggregate<{ _id: unknown; usersInRooms: number }>([
+        { $group: { _id: "$game", usersInRooms: { $sum: { $size: "$users" } } } },
+      ]);
+      const countByGame = new Map(
+        counts.map((c) => [String(c._id), c.usersInRooms])
+      );
+
+      response.status(200).json(
+        games.map((game) => ({
+          ...game.toJSON(),
+          usersInRooms: countByGame.get(game._id.toString()) ?? 0,
+        }))
+      );
     } catch (error) {
       next(error);
     }

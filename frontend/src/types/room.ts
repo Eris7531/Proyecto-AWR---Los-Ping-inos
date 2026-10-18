@@ -18,6 +18,7 @@ export interface Game {
   id: string;
   name: string;
   image: string;
+  usersInRooms?: number;
 }
 
 export interface RoomMember {
