@@ -6,7 +6,7 @@ import {
 } from "@mui/material";
 
 export interface GamePreviewProps {
-  id: number;
+  id: string;
   name: string;
   image: string;
   usersInRooms: number;

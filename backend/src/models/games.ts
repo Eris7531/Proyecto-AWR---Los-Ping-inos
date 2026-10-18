@@ -27,7 +27,6 @@ const GameSchema = new Schema(
   }
 );
 
-const Game = mongoose.model("Game", GameSchema);
 
 GameSchema.set("toJSON", {
   transform: (
@@ -44,5 +43,7 @@ GameSchema.set("toJSON", {
     delete returnedObject.__v;
   },
 });
+
+const Game = mongoose.model("Game", GameSchema);
 
 export default Game;

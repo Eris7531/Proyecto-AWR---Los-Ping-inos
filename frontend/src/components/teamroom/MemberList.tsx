@@ -6,11 +6,11 @@ import {
     ListItemText,
     Typography,
 } from "@mui/material";
-import type { PublicUser } from "../../types/user";
+import type { User } from "../../types/user";
 import { getRankName } from "../../utils/rank";
 
 interface MemberListProps {
-    members: PublicUser[];
+    members: User[];
     gameId: number;
 }
 
@@ -39,10 +39,10 @@ export default function MemberList({ members, gameId }: MemberListProps) {
                         }}
                     >
                     <ListItemAvatar>
-                        <Avatar src={member.avatar} alt={member.name} />
+                        <Avatar src={member.avatar ?? undefined} alt={member.username} />
                     </ListItemAvatar>
                     <ListItemText
-                        primary={member.name}
+                        primary={member.username}
                         secondary={getRankName(member, gameId)}
                     />
                     </ListItem>

@@ -1,50 +1,14 @@
 {
-  "authUsers": [
-    {
-      "id": 1,
-      "name": "Alex",
-      "avatar": "https://i.pravatar.cc/150?img=12",
-      "rank": [
-        {
-          "id": 1,
-          "Game": {
-            "id": 1,
-            "gameName": "League of Legends"
-          },
-          "rankName": "Plata"
-        }
-      ],
-      "email": "alex@gmail.com",
-      "password": "123456"
-    },
-    {
-      "id": 2,
-      "name": "Sofia",
-      "avatar": "https://i.pravatar.cc/150?img=47",
-      "rank": [
-        {
-          "id": 2,
-          "Game": {
-            "id": 1,
-            "gameName": "League of Legends"
-          },
-          "rankName": "Bronce"
-        }
-      ],
-      "email": "sofia@gmail.com",
-      "password": "qwerty"
-    }
-  ],
   "users": [
     {
-      "id": 1,
-      "name": "Alex",
+      "id": "1",
+      "username": "Alex",
       "avatar": "https://i.pravatar.cc/150?img=12",
       "rank": [
         {
-          "id": 1,
-          "Game": {
-            "id": 1,
+          "id": "1",
+          "game": {
+            "id": "1",
             "gameName": "League of Legends"
           },
           "rankName": "Plata"
@@ -52,14 +16,14 @@
       ]
     },
     {
-      "id": 2,
-      "name": "Sofia",
+      "id": "2",
+      "username": "Sofia",
       "avatar": "https://i.pravatar.cc/150?img=47",
       "rank": [
         {
-          "id": 2,
-          "Game": {
-            "id": 1,
+          "id": "2",
+          "game": {
+            "id": "1",
             "gameName": "League of Legends"
           },
           "rankName": "Bronce"
@@ -72,7 +36,7 @@
       "id": 1,
       "name": "Equipo LoL Demo",
       "gameId": 1,
-      "memberIds": [1, 2]
+      "memberIds": ["1", "2"]
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

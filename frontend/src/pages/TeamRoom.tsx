@@ -1,51 +1,180 @@
-import { useParams } from "react-router-dom";
-import { Box, Paper, Stack, Typography } from "@mui/material";
-import MemberList from "../components/teamroom/MemberList";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  Alert,
+  Avatar,
+  Box,
+  Button,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  Paper,
+  Stack,
+  Typography,
+} from "@mui/material";
+import { apiRequest } from "../services/api";
+import type { RoomDetail } from "../types/room";
 import ChatBox from "../components/teamroom/ChatBox";
-import { useTeamRoom } from "../hooks/useTeamRoom";
-import type { PublicUser } from "../types/user";
+import { useRoomMessages } from "../hooks/useRoomMessages";
 
-interface TeamRoomParams extends Record<string, string | undefined> {
-    equipoId?: string;
+interface TeamRoomPageProps {
+  currentUserId: string;
 }
 
-export default function TeamRoomPage() {
-    const { equipoId } = useParams<TeamRoomParams>();
-    const { team, members, usersById, messages, sendMessage } = useTeamRoom(equipoId ?? "");
+export default function TeamRoomPage({
+  currentUserId,
+}: TeamRoomPageProps) {
+  const { equipoId } = useParams<{ equipoId: string }>();
+  const navigate = useNavigate();
 
-    // reemplazar por usauario real cuando exista la bbdd
-    const currentUser: PublicUser | undefined = members[0];
+  const [room, setRoom] = useState<RoomDetail | null>(null);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
 
-    const handleSend = (text: string): void => {
-        if (!currentUser) return;
-        sendMessage(currentUser.id, text);
-    };
+  const chat = useRoomMessages(equipoId ?? "");
 
-    if (!team) {
-        return <Typography sx={{ p: 2 }}>Equipo no encontrado.</Typography>;
+  useEffect(() => {
+    if (!equipoId) {
+      setError("No se indicó una sala.");
+      setLoading(false);
+      return;
     }
 
+    let cancelled = false;
+
+    setLoading(true);
+    setError("");
+
+    apiRequest<RoomDetail>(
+      `/rooms/${encodeURIComponent(equipoId)}`
+    )
+      .then((data) => {
+        if (!cancelled) setRoom(data);
+      })
+      .catch((err: Error) => {
+        if (!cancelled) setError(err.message);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [equipoId]);
+
+  const handleLeave = async () => {
+    if (!equipoId) return;
+
+    try {
+      await apiRequest(
+        `/rooms/${encodeURIComponent(equipoId)}/leave`,
+        { method: "POST" }
+      );
+
+      navigate("/");
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "No se pudo salir de la sala"
+      );
+    }
+  };
+
+  if (loading) {
+    return <Typography sx={{ p: 3 }}>Cargando sala...</Typography>;
+  }
+
+  if (error && !room) {
     return (
-        <Box sx={{ p: 2, minHeight: "100vh", bgcolor: "action.hover" }}>
-        <Typography variant="h4" gutterBottom>
-            {team.name}
-        </Typography>
-
-        <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
-            <Paper variant="outlined" sx={{ p: 2, width: { md: 260 } }}>
-            <MemberList members={members} gameId={team.gameId} />
-            </Paper>
-
-            <Paper variant="outlined" sx={{ p: 2, flex: 1 }}>
-            <ChatBox
-                messages={messages}
-                usersById={usersById}
-                gameId={team.gameId}
-                currentUserId={currentUser?.id}
-                onSend={handleSend}
-            />
-            </Paper>
-        </Stack>
-        </Box>
+      <Box sx={{ p: 3 }}>
+        <Alert severity="error">{error}</Alert>
+        <Button sx={{ mt: 2 }} onClick={() => navigate("/")}>
+          Volver
+        </Button>
+      </Box>
     );
+  }
+
+  if (!room) return null;
+
+  const gameName =
+    typeof room.game === "object" && room.game !== null
+      ? room.game.name
+      : "Juego";
+
+  return (
+    <Box sx={{ p: 3, minHeight: "100vh", bgcolor: "action.hover" }}>
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+      )}
+
+      <Stack
+        direction={{ xs: "column", sm: "row" }}
+        spacing={2}
+        sx={{
+          mb: 3,
+          justifyContent: "space-between",
+          alignItems: { xs: "stretch", sm: "center" },
+        }}
+      >
+        <Box>
+          <Typography variant="overline">{gameName}</Typography>
+          <Typography variant="h4" component="h1" sx={{ fontWeight: 700 }}>
+            {room.name}
+          </Typography>
+          <Typography color="text.secondary">
+            {room.rankName} · Requisito: {room.requiredRank}
+          </Typography>
+        </Box>
+
+        <Button variant="outlined" color="error" onClick={handleLeave}>
+          Salir de la sala
+        </Button>
+      </Stack>
+
+      <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
+        <Paper variant="outlined" sx={{ p: 2, width: { md: 300 } }}>
+          <Typography variant="h6">
+            Integrantes ({room.users.length}/{room.maxPlayers})
+          </Typography>
+
+          <List>
+            {room.users.map((member) => (
+              <ListItem key={member._id}>
+                <ListItemAvatar>
+                  <Avatar
+                    src={member.avatar ?? undefined}
+                    alt={member.username}
+                  >
+                    {member.username.charAt(0).toUpperCase()}
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText primary={member.username} />
+              </ListItem>
+            ))}
+          </List>
+        </Paper>
+
+        <Paper variant="outlined" sx={{ p: 2, flex: 1, minWidth: 0 }}>
+          <Typography variant="h6" sx={{ mb: 2 }}>
+            Chat de la sala
+          </Typography>
+
+          <ChatBox
+            messages={chat.messages}
+            currentUserId={currentUserId}
+            loading={chat.loading}
+            sending={chat.sending}
+            error={chat.error}
+            onSend={chat.sendMessage}
+          />
+        </Paper>
+      </Stack>
+    </Box>
+  );
 }
