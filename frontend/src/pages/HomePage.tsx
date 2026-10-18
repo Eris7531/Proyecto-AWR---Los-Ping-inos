@@ -1,11 +1,8 @@
-import { useEffect, useState } from "react";
 import { Box, Container, Grid, Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import GamePreview from "../components/gamePreview";
-import { apiRequest } from "../services/api";
-import type { Game } from "../types/room";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import GamePreview from "../components/GamePreview";
+import { useGames } from "../hooks/useGames";
 import type { User } from "../types/user";
-import {games} from "../data/games";
 
 interface HomePageProps {
   user: User | null;
@@ -13,14 +10,13 @@ interface HomePageProps {
 
 function HomePage({ user }: HomePageProps) {
   const navigate = useNavigate();
-  const [games, setGames] = useState<Game[]>([]);
-  const [error, setError] = useState("");
+  const { games, loading, error } = useGames();
+  const [searchParams] = useSearchParams();
 
-  useEffect(() => {
-    apiRequest<Game[]>("/games")
-      .then(setGames)
-      .catch((err: Error) => setError(err.message));
-  }, []);
+  const search = (searchParams.get("q") ?? "").trim().toLowerCase();
+  const visibleGames = games.filter((game) =>
+    game.name.toLowerCase().includes(search)
+  );
 
   const handleGameSelect = (gameId: string) => {
     if (!user) {
@@ -45,13 +41,13 @@ function HomePage({ user }: HomePageProps) {
 
       <Box sx={{ mt: 3 }}>
         <Grid container spacing={3}>
-          {games.map((game) => (
+          {visibleGames.map((game) => (
             <Grid key={game.id} size={{ xs: 12, sm: 6, md: 4 }}>
               <GamePreview
                 id={game.id}
                 name={game.name}
                 image={game.image}
-                usersInRooms={0}
+                usersInRooms={game.usersInRooms ?? 0}
                 onClick={() => handleGameSelect(game.id)}
               />
             </Grid>
@@ -59,9 +55,15 @@ function HomePage({ user }: HomePageProps) {
         </Grid>
       </Box>
 
-      {!error && games.length === 0 && (
+      {loading && (
         <Typography sx={{ mt: 3 }}>
           Cargando juegos...
+        </Typography>
+      )}
+
+      {games.length > 0 && visibleGames.length === 0 && (
+        <Typography sx={{ mt: 3 }}>
+          No se encontraron juegos para «{searchParams.get("q")}».
         </Typography>
       )}
     </Container>
