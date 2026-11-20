@@ -1,7 +1,15 @@
-
 import { useState, type FormEvent } from "react";
+import {
+  Alert,
+  Box,
+  Button,
+  CircularProgress,
+  Paper,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import type { User } from "../types/user";
-import "../styles/LogReg.css";
 
 interface LoginProps {
   onLogin: (user: User) => void;
@@ -32,9 +40,7 @@ function Login({ onLogin, onGoToRegister }: LoginProps) {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          data.error || "No se pudo iniciar sesión."
-        );
+        throw new Error(data.error || "No se pudo iniciar sesión.");
       }
 
       const csrfToken = response.headers.get("X-CSRF-Token");
@@ -48,7 +54,7 @@ function Login({ onLogin, onGoToRegister }: LoginProps) {
       setError(
         err instanceof Error
           ? err.message
-          : "Error de conexión con el servidor."
+          : "Error de conexión con el servidor.",
       );
     } finally {
       setLoading(false);
@@ -56,78 +62,125 @@ function Login({ onLogin, onGoToRegister }: LoginProps) {
   };
 
   return (
-    <main className="auth-page">
-      <section className="auth-card">
+    <Box
+      component="main"
+      sx={{
+        minHeight: "100dvh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        px: 2,
+        py: 3,
+      }}
+    >
+      <Paper
+        component="section"
+        elevation={3}
+        sx={{
+          width: "100%",
+          maxWidth: 430,
+          mx: "auto",
+          p: { xs: 3, sm: 4.5 },
+        }}
+      >
+        <Stack spacing={3}>
+          <Box sx={{ textAlign: "center" }}>
+            <Typography
+              component="span"
+              variant="overline"
+              color="text.secondary"
+              sx={{ letterSpacing: 1.5, fontWeight: 700 }}
+            >
+              BIENVENIDO DE NUEVO
+            </Typography>
 
-        <div className="auth-heading">
-          <span className="auth-eyebrow">BIENVENIDO DE NUEVO</span>
-          <h1>Iniciar sesión</h1>
-          <p>Conéctate con tu comunidad.</p>
-        </div>
+            <Typography component="h1" variant="h4" sx={{ mt: 1, mb: 1 }}>
+              Iniciar sesión
+            </Typography>
 
-        <form className="auth-form" onSubmit={handleSubmit}>
-          <div className="auth-field">
-            <label htmlFor="login-username">Nombre de usuario</label>
-            <input
+            <Typography variant="body2" color="text.secondary">
+              Conéctate con tu comunidad.
+            </Typography>
+          </Box>
+
+          <Stack component="form" spacing={2.25} onSubmit={handleSubmit}>
+            <TextField
               id="login-username"
-              type="text"
+              label="Nombre de usuario"
               placeholder="Tu nombre de usuario"
               value={username}
               onChange={(event) => setUsername(event.target.value)}
               autoComplete="username"
+              slotProps={{
+                htmlInput: { "data-testid": "usernameLogin" },
+              }}
               required
+              fullWidth
             />
-          </div>
 
-          <div className="auth-field">
-            <label htmlFor="login-password">Contraseña</label>
-            <input
+            <TextField
               id="login-password"
+              label="Contraseña"
               type="password"
               placeholder="Introduce tu contraseña"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               autoComplete="current-password"
+              slotProps={{
+                htmlInput: { "data-testid": "passwordLogin" },
+              }}
               required
+              fullWidth
             />
-          </div>
 
-          {error && (
-            <div className="auth-error" role="alert">
-              <span>!</span>
-              {error}
-            </div>
-          )}
+            {error && <Alert severity="error">{error}</Alert>}
 
-          <button
-            className="auth-submit"
-            type="submit"
-            disabled={loading}
+            <Button
+              type="submit"
+              variant="contained"
+              disabled={loading}
+              endIcon={
+                loading ? (
+                  <CircularProgress size={18} color="inherit" />
+                ) : (
+                  "→"
+                )
+              }
+              fullWidth
+            >
+              {loading ? "Iniciando sesión..." : "Iniciar sesión"}
+            </Button>
+          </Stack>
+
+          <Box sx={{ textAlign: "center" }}>
+            <Typography
+              variant="overline"
+              color="text.secondary"
+              sx={{ display: "block", mb: 1.5, letterSpacing: 1 }}
+            >
+              ¿NUEVO POR AQUÍ?
+            </Typography>
+
+            <Button
+              type="button"
+              variant="outlined"
+              onClick={onGoToRegister}
+              fullWidth
+            >
+              Crear una cuenta
+            </Button>
+          </Box>
+
+          <Typography
+            variant="caption"
+            color="text.secondary"
+            align="center"
           >
-            {loading ? "Iniciando sesión..." : "Iniciar sesión"}
-            {!loading && <span>→</span>}
-          </button>
-        </form>
-
-        <div className="auth-divider">
-          <span />
-          <span>¿NUEVO POR AQUÍ?</span>
-          <span />
-        </div>
-
-        <button
-          type="button"
-          className="auth-secondary"
-          onClick={onGoToRegister}
-        >
-          Crear una cuenta
-        </button>
-
-        <p className="auth-footer">
-          Tu comunidad. Tu espacio. Tu conexión.
-        </p>
-      </section>
-    </main>
+            Tu comunidad. Tu espacio. Tu conexión.
+          </Typography>
+        </Stack>
+      </Paper>
+    </Box>
   );
 }
 

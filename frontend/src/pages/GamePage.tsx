@@ -157,7 +157,7 @@ function GamePage() {
       </Typography>
 
       {error && (
-        <Alert severity="error" sx={{ mb: 2 }}>
+        <Alert className="error" severity="error" sx={{ mb: 2 }}>
           {error}
         </Alert>
       )}

@@ -1,6 +1,14 @@
-
 import { useState, type FormEvent } from "react";
-import "../styles/LogReg.css";
+import {
+  Alert,
+  Box,
+  Button,
+  CircularProgress,
+  Paper,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 
 interface RegisterProps {
   onGoToLogin: () => void;
@@ -50,7 +58,7 @@ function Register({ onGoToLogin }: RegisterProps) {
         throw new Error(
           response.status === 409
             ? "Ese nombre de usuario ya está en uso."
-            : data.error || "No se pudo crear la cuenta."
+            : data.error || "No se pudo crear la cuenta.",
         );
       }
 
@@ -62,7 +70,7 @@ function Register({ onGoToLogin }: RegisterProps) {
       setError(
         err instanceof Error
           ? err.message
-          : "Error de conexión con el servidor."
+          : "Error de conexión con el servidor.",
       );
     } finally {
       setLoading(false);
@@ -70,102 +78,160 @@ function Register({ onGoToLogin }: RegisterProps) {
   };
 
   return (
-    <main className="auth-page">
-      <section className="auth-card auth-card-register">
+    <Box
+      component="main"
+      sx={{
+        minHeight: "100dvh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        px: 2,
+        py: 3,
+      }}
+    >
+      <Paper
+        component="section"
+        elevation={3}
+        sx={{
+          width: "100%",
+          maxWidth: 430,
+          mx: "auto",
+          p: { xs: 3, sm: 4.5 },
+        }}
+      >
+        <Stack spacing={3}>
+          <Box sx={{ textAlign: "center" }}>
+            <Typography
+              component="span"
+              variant="overline"
+              color="text.secondary"
+              sx={{ letterSpacing: 1.5, fontWeight: 700 }}
+            >
+              ÚNETE A LA COMUNIDAD
+            </Typography>
 
-        <div className="auth-heading">
-          <span className="auth-eyebrow">ÚNETE A LA COMUNIDAD</span>
-          <h1>Crear cuenta</h1>
-          <p>Tu próximo espacio favorito comienza aquí.</p>
-        </div>
+            <Typography component="h1" variant="h4" sx={{ mt: 1, mb: 1 }}>
+              Crear cuenta
+            </Typography>
 
-        <form className="auth-form" onSubmit={handleSubmit}>
-          <div className="auth-field">
-            <label htmlFor="register-username">Nombre de usuario</label>
-            <input
+            <Typography variant="body2" color="text.secondary">
+              Tu próximo espacio favorito comienza aquí.
+            </Typography>
+          </Box>
+
+          <Stack
+            component="form"
+            spacing={2.25}
+            onSubmit={handleSubmit}
+            noValidate
+          >
+            <TextField
               id="register-username"
-              type="text"
+              label="Nombre de usuario"
               placeholder="Elige tu usuario"
               value={username}
               onChange={(event) => setUsername(event.target.value)}
               autoComplete="username"
-              maxLength={30}
+              slotProps={{
+                htmlInput: {
+                  maxLength: 30,
+                  "data-testid": "usernameReg",
+                },
+              }}
               required
+              fullWidth
             />
-          </div>
 
-          <div className="auth-field">
-            <label htmlFor="register-password">Contraseña</label>
-            <input
+            <TextField
               id="register-password"
+              label="Contraseña"
               type="password"
               placeholder="Mínimo 8 caracteres"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               autoComplete="new-password"
-              minLength={8}
+              slotProps={{
+                htmlInput: {
+                  minLength: 8,
+                  "data-testid": "passwordReg",
+                },
+              }}
               required
+              fullWidth
             />
-          </div>
 
-          <div className="auth-field">
-            <label htmlFor="register-confirm-password">
-              Confirmar contraseña
-            </label>
-            <input
+            <TextField
               id="register-confirm-password"
+              label="Confirmar contraseña"
               type="password"
               placeholder="Repite tu contraseña"
               value={confirmPassword}
               onChange={(event) => setConfirmPassword(event.target.value)}
               autoComplete="new-password"
-              minLength={8}
+              slotProps={{
+                htmlInput: {
+                  minLength: 8,
+                  "data-testid": "confirmPasswordReg",
+                },
+              }}
               required
+              fullWidth
             />
-          </div>
 
-          {error && (
-            <div className="auth-error" role="alert">
-              <span>!</span>
-              {error}
-            </div>
-          )}
+            {error && <Alert className="error" severity="error">{error}</Alert>}
 
-          {success && (
-            <div className="auth-success" role="status">
-              {success}
-            </div>
-          )}
+            {success && (
+              <Alert severity="success" role="status">
+                {success}
+              </Alert>
+            )}
 
-          <button
-            className="auth-submit"
-            type="submit"
-            disabled={loading}
+            <Button
+              type="submit"
+              variant="contained"
+              disabled={loading}
+              endIcon={
+                loading ? (
+                  <CircularProgress size={18} color="inherit" />
+                ) : (
+                  "→"
+                )
+              }
+              fullWidth
+            >
+              {loading ? "Creando cuenta..." : "Crear mi cuenta"}
+            </Button>
+          </Stack>
+
+          <Box sx={{ textAlign: "center" }}>
+            <Typography
+              variant="overline"
+              color="text.secondary"
+              sx={{ display: "block", mb: 1.5, letterSpacing: 1 }}
+            >
+              ¿YA TIENES CUENTA?
+            </Typography>
+
+            <Button
+              type="button"
+              variant="outlined"
+              onClick={onGoToLogin}
+              fullWidth
+            >
+              Iniciar sesión
+            </Button>
+          </Box>
+
+          <Typography
+            variant="caption"
+            color="text.secondary"
+            align="center"
           >
-            {loading ? "Creando cuenta..." : "Crear mi cuenta"}
-            {!loading && <span>→</span>}
-          </button>
-        </form>
-
-        <div className="auth-divider">
-          <span />
-          <span>¿YA TIENES CUENTA?</span>
-          <span />
-        </div>
-
-        <button
-          type="button"
-          className="auth-secondary"
-          onClick={onGoToLogin}
-        >
-          Iniciar sesión
-        </button>
-
-        <p className="auth-footer">
-          Un lugar para conectar y compartir.
-        </p>
-      </section>
-    </main>
+            Un lugar para conectar y compartir.
+          </Typography>
+        </Stack>
+      </Paper>
+    </Box>
   );
 }
 

@@ -1,6 +1,6 @@
 
 import express from "express";
-import mongoose from "mongoose";
+// import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import path from "node:path";
 
@@ -13,26 +13,31 @@ import loginRouter from "./controllers/login";
 
 import gamesRouter from "./controllers/games";
 import roomsRouter from "./controllers/rooms";
+import testingRouter from "./controllers/testing";
 
 const app = express();
 
-mongoose.set("strictQuery", false);
+// mongoose.set("strictQuery", false);
 
-if (config.MONGODB_URI) {
-  mongoose
-    .connect(config.MONGODB_URI, {
-      dbName: config.MONGODB_DBNAME,
-    })
-    .catch((error: Error) => {
-      logger.error(`Error connecting to MongoDB: ${error.message}`);
-    });
-}
+// if (config.MONGODB_URI) {
+//   mongoose
+//     .connect(config.MONGODB_URI, {
+//       dbName: config.MONGODB_DBNAME,
+//     })
+//     .catch((error: Error) => {
+//       logger.error(`Error connecting to MongoDB: ${error.message}`);
+//     });
+// }
 
 const clientBuildPath = path.join(__dirname, "dist");
 
 app.use(express.json());
 app.use(cookieParser());
 app.use(middleware.requestLogger);
+
+if (config.NODE_ENV === "test") {
+  app.use("/api/testing", testingRouter);
+}
 
 app.use(express.static(clientBuildPath));
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
@@ -59,5 +64,7 @@ app.get(/.*/, (_req, res, next) => {
 });
 
 app.use(middleware.errorHandler);
+
+
 
 export default app;

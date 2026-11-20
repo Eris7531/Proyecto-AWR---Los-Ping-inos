@@ -90,7 +90,7 @@ export default function TeamRoomPage({
   if (error && !room) {
     return (
       <Box sx={{ p: 3 }}>
-        <Alert severity="error">{error}</Alert>
+        <Alert className="error" severity="error">{error}</Alert>
         <Button sx={{ mt: 2 }} onClick={() => navigate("/")}>
           Volver
         </Button>
@@ -108,7 +108,7 @@ export default function TeamRoomPage({
   return (
     <Box sx={{ p: 3, minHeight: "100vh", bgcolor: "action.hover" }}>
       {error && (
-        <Alert severity="error" sx={{ mb: 2 }}>
+        <Alert className="error" severity="error" sx={{ mb: 2 }}>
           {error}
         </Alert>
       )}

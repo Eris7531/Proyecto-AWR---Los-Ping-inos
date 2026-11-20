@@ -34,4 +34,4 @@ const messageSchema = new Schema<IMessage>({
 
 const Message = model<IMessage>('Message', messageSchema);
 
-export default Message;import mongoose from "mongoose";
+export default Message;

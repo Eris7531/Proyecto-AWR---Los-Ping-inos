@@ -1,4 +1,4 @@
-import { Box, Container, Grid, Typography } from "@mui/material";
+import { Alert, Box, Container, Grid, Typography } from "@mui/material";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import GamePreview from "../components/GamePreview";
 import { useGames } from "../hooks/useGames";
@@ -34,9 +34,9 @@ function HomePage({ user }: HomePageProps) {
       </Typography>
 
       {error && (
-        <Typography color="error" role="alert">
+        <Alert className="error" severity="error" sx={{ mb: 2 }}>
           {error}
-        </Typography>
+        </Alert>
       )}
 
       <Box sx={{ mt: 3 }}>

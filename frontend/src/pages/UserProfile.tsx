@@ -105,7 +105,7 @@ export default function UserProfile({ user, onUserUpdated }: UserProfileProps) {
   if (!profile) {
     return (
       <Container maxWidth="md" sx={{ py: 4 }}>
-        <Alert severity="error">No se encontró ese usuario.</Alert>
+        <Alert className="error" severity="error">No se encontró ese usuario.</Alert>
       </Container>
     );
   }
