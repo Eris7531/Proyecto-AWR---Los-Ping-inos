@@ -3,6 +3,7 @@ import express from "express";
 // import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import path from "node:path";
+import fs from "node:fs";
 
 import logger from "./utils/logger";
 import config from "./utils/config";
@@ -29,7 +30,9 @@ const app = express();
 //     });
 // }
 
-const clientBuildPath = path.join(__dirname, "../../../frontend/dist");
+const clientBuildPath = fs.existsSync(path.join(process.cwd(), "dist", "index.html"))
+  ? path.join(process.cwd(), "dist")
+  : path.join(__dirname, "../../../frontend/dist");
 
 app.use(express.json());
 app.use(cookieParser());
