@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 import test, { after, beforeEach, describe } from "node:test";
 import app from "../../src/app";
 import mongoose from "mongoose";
-import helper from "./test_utils";
+import helper from "../utils/test_utils";
 import assert from "node:assert";
 
 const api = supertest(app);

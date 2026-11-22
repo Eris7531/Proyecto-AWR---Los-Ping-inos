@@ -19,7 +19,7 @@ const messageSchema = new Schema<IMessage>({
   },
   senderId: { 
     type: Schema.Types.ObjectId, 
-    ref: 'User', 
+    ref: 'UserPinGamers', 
     required: true 
   },
   content: { 

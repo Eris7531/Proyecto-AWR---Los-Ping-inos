@@ -32,7 +32,7 @@ const RoomSchema = new Schema(
         users: [
             {
                 type: Schema.Types.ObjectId,
-                ref: "User",
+                ref: "UserPinGamers",
             }
         ],
         maxPlayers: {
