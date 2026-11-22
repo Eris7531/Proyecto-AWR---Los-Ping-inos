@@ -7,6 +7,7 @@ import type { User } from "./types/user";
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
+  const [loadingSession, setLoadingSession] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,6 +27,8 @@ function App() {
         if (active) setUser(currentUser);
       } catch {
         if (active) setUser(null);
+      } finally {
+        if (active) setLoadingSession(false);
       }
     };
 
@@ -34,6 +37,10 @@ function App() {
       active = false;
     };
   }, []);
+
+  if (loadingSession) {
+    return null;
+  }
 
   const handleLogin = (loggedInUser: User) => {
     setUser(loggedInUser);

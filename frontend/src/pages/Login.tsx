@@ -133,7 +133,7 @@ function Login({ onLogin, onGoToRegister }: LoginProps) {
               fullWidth
             />
 
-            {error && <Alert severity="error">{error}</Alert>}
+            {error && <Alert className="error" severity="error">{error}</Alert>}
 
             <Button
               type="submit"
