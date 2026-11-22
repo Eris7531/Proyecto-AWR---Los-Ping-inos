@@ -17,7 +17,7 @@ import { apiRequest } from "../services/api";
 import type { RoomDetail } from "../types/room";
 import ChatBox from "../components/teamroom/ChatBox";
 import { useRoomMessages } from "../hooks/useRoomMessages";
-
+import { useRoomStore } from "../stores/roomStore";
 interface TeamRoomPageProps {
   currentUserId: string;
 }
@@ -33,6 +33,14 @@ export default function TeamRoomPage({
   const [loading, setLoading] = useState(true);
 
   const chat = useRoomMessages(equipoId ?? "");
+
+  const setCurrentRoom = useRoomStore(
+    (state) => state.setCurrentRoom
+  );
+
+  const clearCurrentRoom = useRoomStore(
+    (state) => state.clearCurrentRoom
+  );
 
   useEffect(() => {
     if (!equipoId) {
@@ -50,7 +58,12 @@ export default function TeamRoomPage({
       `/rooms/${encodeURIComponent(equipoId)}`
     )
       .then((data) => {
-        if (!cancelled) setRoom(data);
+        if (!cancelled) {
+          setRoom(data);
+
+          // Actualizamos Zustand con la información completa
+          setCurrentRoom(data);
+        }
       })
       .catch((err: Error) => {
         if (!cancelled) setError(err.message);
@@ -73,7 +86,11 @@ export default function TeamRoomPage({
         { method: "POST" }
       );
 
+      // Limpiamos la sala actual
+      clearCurrentRoom();
+
       navigate("/");
+
     } catch (err) {
       setError(
         err instanceof Error

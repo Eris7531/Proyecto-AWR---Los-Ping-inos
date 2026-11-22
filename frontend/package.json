@@ -22,7 +22,8 @@
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-router-dom": "^7.18.4",
-    "seed": "^0.4.4"
+    "seed": "^0.4.4",
+    "zustand": "^5.1.0"
   },
   "devDependencies": {
     "@types/node": "^22.20.3",

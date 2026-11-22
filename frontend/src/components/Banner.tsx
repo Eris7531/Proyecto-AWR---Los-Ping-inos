@@ -1,16 +1,14 @@
 import * as React from 'react';
-import { styled, alpha } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import InputBase from '@mui/material/InputBase';
 import Badge from '@mui/material/Badge';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
-import SearchIcon from '@mui/icons-material/Search';
+import { useRoomStore } from "../stores/roomStore";
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
@@ -19,9 +17,7 @@ import {useState} from "react";
 import type { User } from "../types/user";
 import {
   Link as RouterLink,
-  useLocation,
   useNavigate,
-  useSearchParams,
 } from "react-router-dom";
 
 interface BannerProps {
@@ -29,67 +25,19 @@ interface BannerProps {
     onLogout: () => void;
 }
 
-const Search = styled('div')(({ theme }) => ({
-  position: 'relative',
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  '&:hover': {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
-  },
-  marginRight: theme.spacing(2),
-  marginLeft: 0,
-  width: '100%',
-  [theme.breakpoints.up('sm')]: {
-    marginLeft: theme.spacing(3),
-    width: 'auto',
-  },
-}));
-
-const SearchIconWrapper = styled('div')(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: '100%',
-  position: 'absolute',
-  pointerEvents: 'none',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: 'inherit',
-  '& .MuiInputBase-input': {
-    padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create('width'),
-    width: '100%',
-    [theme.breakpoints.up('md')]: {
-      width: '20ch',
-    },
-  },
-}));
 
 export default function PrimarySearchAppBar({user, onLogout}: BannerProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
 
+  const currentRoom = useRoomStore(
+    (state) => state.currentRoom
+  );
+  
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
   const navigate = useNavigate();
-  const location = useLocation();
-  const [searchParams] = useSearchParams();
-
-  const search = searchParams.get("q") ?? "";
-
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-    navigate(
-      { pathname: "/", search: value ? `?q=${encodeURIComponent(value)}` : "" },
-      { replace: location.pathname === "/" }
-    );
-  };
-
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -125,10 +73,6 @@ export default function PrimarySearchAppBar({user, onLogout}: BannerProps) {
       onClose={handleMenuClose}
     >
 
-      <MenuItem onClick={onLogout}>
-        Cerrar sesión
-      </MenuItem>
-
       <MenuItem
         onClick={() => {
         handleMenuClose();
@@ -136,6 +80,11 @@ export default function PrimarySearchAppBar({user, onLogout}: BannerProps) {
       }}
       >
         Mi cuenta
+      </MenuItem>
+
+
+      <MenuItem onClick={onLogout}>
+        Cerrar sesión
       </MenuItem>
     </Menu>
   );
@@ -230,17 +179,39 @@ export default function PrimarySearchAppBar({user, onLogout}: BannerProps) {
           >
             Ping-Gamers
           </Typography>
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="¿Qué buscas?"
-              inputProps={{ 'aria-label': 'search' }}
-              value={search}
-              onChange={handleSearchChange}
-            />
-          </Search>
+          {currentRoom && (
+            <Box
+              onClick={() => navigate(`/equipos/${currentRoom.id}`)}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+                ml: 3,
+                px: 2,
+                py: 1,
+                borderRadius: 2,
+                backgroundColor: "rgba(255,255,255,0.15)",
+                cursor: "pointer",
+                transition: "background-color 0.2s",
+                "&:hover": {
+                  backgroundColor: "rgba(255,255,255,0.25)",
+                },
+              }}
+            >
+              <Box
+                sx={{
+                  width: 9,
+                  height: 9,
+                  borderRadius: "50%",
+                  backgroundColor: "#4ade80",
+                }}
+              />
+
+              <Typography variant="body2" sx={{ color: "inherit" }}>
+                Estás en: <strong>{currentRoom.name}</strong>
+              </Typography>
+            </Box>
+          )}
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
             {user && (

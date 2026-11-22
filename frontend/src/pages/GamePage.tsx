@@ -18,7 +18,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import RoomCard from "../components/RoomCard";
 import { apiRequest } from "../services/api";
 import type { Game, Room } from "../types/room";
-
+import { useRoomStore } from "../stores/roomStore";
 interface CurrentRoom {
   id: string;
   name: string;
@@ -44,7 +44,10 @@ function GamePage() {
   const [joinConfirmation, setJoinConfirmation] =
     useState<JoinConfirmation | null>(null);
   const [joining, setJoining] = useState(false);
-
+  const setCurrentRoom = useRoomStore(
+    (state) => state.setCurrentRoom
+  );
+  
   useEffect(() => {
     if (!gameId) {
       setError("No se indicó un juego.");
@@ -122,6 +125,9 @@ function GamePage() {
         method: "POST",
         body: JSON.stringify({ replaceExisting }),
       });
+
+      // Actualizamos el estado global
+      setCurrentRoom(targetRoom);
 
       setJoinConfirmation(null);
       navigate(`/equipos/${roomId}`);
