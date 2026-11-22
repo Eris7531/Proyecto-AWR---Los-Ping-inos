@@ -73,7 +73,7 @@ export default defineConfig({
 
   webServer: [
   {
-    command: 'npm run dev:test',
+    command: 'npm run seed && npm run dev:test',
     cwd: path.resolve(__dirname, '../backend'),
     url: 'http://localhost:3001/api/testing/health',
     reuseExistingServer: false,

@@ -1,24 +1,33 @@
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import PrimarySearchAppBar from "./components/Banner";
 import { AppRouter } from "./routes/AppRouter";
+import { useUserStore } from "./stores/userStore";
 import type { User } from "./types/user";
 
 function App() {
-  const [user, setUser] = useState<User | null>(null);
-  const [loadingSession, setLoadingSession] = useState(true);
+  const user = useUserStore((state) => state.user);
+  const loadingSession = useUserStore((state) => state.loadingSession);
+  const setUser = useUserStore((state) => state.setUser);
+  const setLoadingSession = useUserStore(
+    (state) => state.setLoadingSession,
+  );
   const navigate = useNavigate();
 
   useEffect(() => {
     let active = true;
+    setLoadingSession(true);
 
     const restoreSession = async () => {
       try {
         const response = await fetch("/api/login/me", {
           credentials: "include",
         });
-        if (!response.ok) return;
+        if (!response.ok) {
+          if (active) setUser(null);
+          return;
+        }
 
         const csrfToken = response.headers.get("X-CSRF-Token");
         if (csrfToken) localStorage.setItem("csrfToken", csrfToken);
@@ -36,12 +45,10 @@ function App() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [setLoadingSession, setUser]);
 
-  if (loadingSession) {
-    return null;
-  }
-
+  if (loadingSession) return null;
+  
   const handleLogin = (loggedInUser: User) => {
     setUser(loggedInUser);
     navigate("/");
