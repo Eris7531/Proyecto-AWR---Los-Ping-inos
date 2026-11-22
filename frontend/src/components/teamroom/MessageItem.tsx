@@ -42,9 +42,9 @@ export default function MessageItem({ message, user, gameId, isOwn}: MessageItem
             {user && (
                 <Chip label={getRankName(user, gameId)} size="small" variant="outlined" />
             )}
-            <Typography variant="caption">{formatTime(message.timestamp)}</Typography>
+            <Typography variant="caption">{formatTime(message.createdAt)}</Typography>
             </Box>
-            <Typography variant="body2">{message.text}</Typography>
+            <Typography variant="body2">{message.content}</Typography>
         </Box>
         </Box>
     );

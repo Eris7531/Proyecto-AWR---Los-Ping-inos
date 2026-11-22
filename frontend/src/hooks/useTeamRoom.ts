@@ -1,45 +1,34 @@
-import { useEffect,  useState } from "react";
+
+import { useEffect, useState } from "react";
 import db from "../../db.json";
-import type { Message } from "../types/message";
+import type { Message, MessageSender } from "../types/message";
 import type { User } from "../types/user";
 import type { Team } from "../types/team";
 
-//  placeholders que se reemplazan por llamadas a servicios cuando exista backend
+// Datos temporales mientras no exista backend
 const ALL_USERS: User[] = db.users;
 const ALL_TEAMS: Team[] = db.teams;
-const USERS_BY_ID = new Map<string, User>(ALL_USERS.map((u) => [u.id, u]));
 
-const SEED_MESSAGES: Message[] = [
-    {
-        id: 1,
-        userId: "1",
-        text: "¿Alguien juega?",
-        timestamp: new Date(Date.now() - 120_000).toISOString(),
-    },
-    {
-        id: 2,
-        userId: "2",
-        text: "Sí, yo estoy disponible.",
-        timestamp: new Date(Date.now() - 60_000).toISOString(),
-    },
-];
+const USERS_BY_ID = new Map<string, User>(
+    ALL_USERS.map((u) => [u.id, u])
+);
 
 const storageKey = (teamId: string): string => `chat:${teamId}`;
 
 function loadMessages(teamId: string): Message[] {
     try {
         const saved = localStorage.getItem(storageKey(teamId));
-        return saved ? (JSON.parse(saved) as Message[]) : SEED_MESSAGES;
+        return saved ? (JSON.parse(saved) as Message[]) : [];
     } catch {
-        return SEED_MESSAGES;
+        return [];
     }
 }
 
 interface UseTeamRoomResult {
-  team: Team | undefined;
+    team: Team | undefined;
     members: User[];
     usersById: Map<string, User>;
-  messages: Message[];
+    messages: Message[];
     sendMessage: (userId: string, text: string) => void;
 }
 
@@ -50,25 +39,46 @@ export function useTeamRoom(teamId: string): UseTeamRoomResult {
         .map((id) => USERS_BY_ID.get(id))
         .filter((u): u is User => u !== undefined);
 
-    const [messages, setMessages] = useState<Message[]>(() => loadMessages(teamId));
+    const [messages, setMessages] = useState<Message[]>(
+        () => loadMessages(teamId)
+    );
 
     useEffect(() => {
         setMessages(loadMessages(teamId));
     }, [teamId]);
 
     const sendMessage = (userId: string, text: string): void => {
+        if (!text.trim()) return;
+
+        const user = USERS_BY_ID.get(userId);
+        if (!user) return;
+
+        const sender: MessageSender = {
+            id: user.id,
+            username: user.username,
+            avatar: user.avatar ?? null,
+        };
+
         const next: Message[] = [
-        ...messages,
-        {
-            id: Math.max(0, ...messages.map((m) => m.id)) + 1,
-            userId,
-            text,
-            timestamp: new Date().toISOString(),
-        },
+            ...messages,
+            {
+                id: crypto.randomUUID(),
+                roomId: teamId,
+                sender,
+                content: text.trim(),
+                createdAt: new Date().toISOString(),
+            },
         ];
+
         setMessages(next);
         localStorage.setItem(storageKey(teamId), JSON.stringify(next));
     };
 
-    return { team, members, usersById: USERS_BY_ID, messages, sendMessage };
+    return {
+        team,
+        members,
+        usersById: USERS_BY_ID,
+        messages,
+        sendMessage,
+    };
 }
